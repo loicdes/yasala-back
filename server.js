@@ -31,6 +31,7 @@ app.use(function (req, res, next) {
   next();})
   .get('/products', PRODUCTS.getAllProducts)
   .get('/products/:category', PRODUCTS.getAllProducts)
+  .get('/products/product/:id', PRODUCTS.getAllProducts)
   .post('/products', PRODUCTS.updateOrCreateProduct)
   .post('/products/:id', PRODUCTS.updateOrCreateProduct)
   .get('/user', USERS.getByLoginPassword)

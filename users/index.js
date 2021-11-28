@@ -1,9 +1,16 @@
 const db = require('../db/index')
-const ObjectId = require('mongodb').ObjectId;
 
 exports.createUser = async (req, res, next) => {
     try {
-        let queryResult = await db.insertOne('yasala', 'users', req.body);
+        const params = {
+            tel: req.body.tel
+        };
+        let queryResult = await db.get('yasala', 'users', params);
+        if (queryResult.length > 0) {
+            res.status(401).json('Un compte existe déjà avec ce numéro');
+        }
+        delete req.body.passwordConfirmation;
+        queryResult = await db.insertOne('yasala', 'users', req.body);
         if (queryResult.insertedCount === 1) {
             res.json(true);
         } else {
@@ -18,10 +25,13 @@ exports.createUser = async (req, res, next) => {
 exports.getByLoginPassword = async (req, res, next) => {
     try {
         const params = {
-            tel: req.params.tel,
-            password: req.params.password
+            tel: req.query.login,
+            password: req.query.password
         };
-        const queryResult = await db.get('receipes', 'receipes', params);
+        const queryResult = await db.get('yasala', 'users', params);
+        if (queryResult.length === 0) {
+            res.status(401).json('Aucun compte existant');
+        }
         res.json(queryResult);
     } catch (e) { 
         console.log('Erreur in getByLoginPassword ' + e.message);
